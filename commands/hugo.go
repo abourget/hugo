@@ -212,6 +212,7 @@ func LoadDefaultSettings() {
 	viper.SetDefault("ArchetypeDir", "archetypes")
 	viper.SetDefault("PublishDir", "public")
 	viper.SetDefault("DataDir", "data")
+	viper.SetDefault("I18nDir", "i18n")
 	viper.SetDefault("ThemesDir", "themes")
 	viper.SetDefault("DefaultLayout", "post")
 	viper.SetDefault("BuildDrafts", false)
@@ -246,6 +247,7 @@ func LoadDefaultSettings() {
 	viper.SetDefault("HasCJKLanguage", false)
 	viper.SetDefault("Multilingual", false)
 	viper.SetDefault("DefaultContentLang", "en")
+	viper.SetDefault("RenderLanguage", "en")
 }
 
 // InitializeConfig initializes a config file with sensible default configuration flags.
@@ -463,19 +465,25 @@ func copyStatic() error {
 func getDirList() []string {
 	var a []string
 	dataDir := helpers.AbsPathify(viper.GetString("DataDir"))
+	i18nDir := helpers.AbsPathify(viper.GetString("I18nDir"))
 	layoutDir := helpers.AbsPathify(viper.GetString("LayoutDir"))
 	walker := func(path string, fi os.FileInfo, err error) error {
 		if err != nil {
 			if path == dataDir && os.IsNotExist(err) {
 				jww.WARN.Println("Skip DataDir:", err)
 				return nil
-
 			}
+
+			if path == i18nDir && os.IsNotExist(err) {
+				jww.WARN.Println("Skip I18nDir:", err)
+				return nil
+			}
+
 			if path == layoutDir && os.IsNotExist(err) {
 				jww.WARN.Println("Skip LayoutDir:", err)
 				return nil
-
 			}
+
 			jww.ERROR.Println("Walker: ", err)
 			return nil
 		}
@@ -508,6 +516,7 @@ func getDirList() []string {
 	}
 
 	filepath.Walk(dataDir, walker)
+	filepath.Walk(i18nDir, walker)
 	filepath.Walk(helpers.AbsPathify(viper.GetString("ContentDir")), walker)
 	filepath.Walk(helpers.AbsPathify(viper.GetString("LayoutDir")), walker)
 	filepath.Walk(helpers.AbsPathify(viper.GetString("StaticDir")), walker)

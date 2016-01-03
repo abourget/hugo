@@ -527,19 +527,30 @@ func (s *Site) Process() (err error) {
 	s.timerStep("initialize & template prep")
 
 	dataSources := make([]source.Input, 0, 2)
-
 	dataSources = append(dataSources, &source.Filesystem{Base: s.absDataDir()})
 
 	// have to be last - duplicate keys in earlier entries will win
-	themeStaticDir, err := helpers.GetThemeDataDirPath()
+	themeDataDir, err := helpers.GetThemeDataDirPath()
 	if err == nil {
-		dataSources = append(dataSources, &source.Filesystem{Base: themeStaticDir})
+		dataSources = append(dataSources, &source.Filesystem{Base: themeDataDir})
 	}
 
 	if err = s.loadData(dataSources); err != nil {
 		return
 	}
 	s.timerStep("load data")
+
+	i18nSources := []source.Input{&source.Filesystem{Base: s.absI18nDir()}}
+
+	themeI18nDir, err := helpers.GetThemeI18nDirPath()
+	if err == nil {
+		i18nSources = []source.Input{&source.Filesystem{Base: themeI18nDir}, i18nSources[0]}
+	}
+
+	if err = loadI18n(i18nSources); err != nil {
+		return
+	}
+	s.timerStep("load i18n")
 
 	if err = s.CreatePages(); err != nil {
 		return
@@ -703,6 +714,10 @@ func (s *Site) hasTheme() bool {
 
 func (s *Site) absDataDir() string {
 	return helpers.AbsPathify(viper.GetString("DataDir"))
+}
+
+func (s *Site) absI18nDir() string {
+	return helpers.AbsPathify(viper.GetString("I18nDir"))
 }
 
 func (s *Site) absThemeDir() string {
