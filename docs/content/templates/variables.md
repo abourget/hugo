@@ -149,7 +149,7 @@ Also available is `.Site` which has the following:
 **.Site.BuildDrafts** A boolean (Default: false) to indicate whether to build drafts. Defined in the site configuration.<br>
 **.Site.Data**  Custom data, see [Data Files](/extras/datafiles/).<br>
 **.Site.Multilingual** Whether the site supports internationalization of the content. With this mode enabled, all your posts' URLs will be prefixed with the language (ex: `/en/2016/01/01/my-post`)<br>
-**.Site.RenderLanguage** When using `Multilingual` mode, will render the site in this language. You can then run `hugo` again with a second `config` file, with the other languages.<br>
+**.Site.RenderLanguage** This indicates which language you are currently rendering the website for.  When using `Multilingual` mode, will render the site in this language. You can then run `hugo` again with a second `config` file, with the other languages. When using `i18n` and `T` template functions, it will use the `i18n/*.yaml` files (in either `/themes/[yourtheme]/i18n` or the `/i18n`, translations in the latter having precedence).<br>
 **.Site.LanguagePrefix** When `Multilingual` is enabled, this will hold `/{{ .Site.RenderLanguage}}`, otherwise will be an empty string.  Using this to prefix taxonomies or other hard-coded links ensures your keep your theme compatible with Multilingual configurations.
 **.Site.LinkLanguages** A list of languages. Used in your templates to iterate through and create links to different languages.<br>
 **.Site.DefaultContentLang** When `Multilingual` is `true`, this would

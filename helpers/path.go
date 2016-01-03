@@ -153,10 +153,16 @@ func GetThemeStaticDirPath() (string, error) {
 	return getThemeDirPath("static")
 }
 
-// GetThemeStaticDirPath returns the theme's data dir path if theme is set.
+// GetThemeDataDirPath returns the theme's data dir path if theme is set.
 // If theme is set and the data dir doesn't exist, an error is returned.
 func GetThemeDataDirPath() (string, error) {
 	return getThemeDirPath("data")
+}
+
+// GetThemeI18nDirPath returns the theme's i18n dir path if theme is set.
+// If theme is set and the i18n dir doesn't exist, an error is returned.
+func GetThemeI18nDirPath() (string, error) {
+	return getThemeDirPath("i18n")
 }
 
 func getThemeDirPath(path string) (string, error) {

@@ -1533,5 +1533,7 @@ func init() {
 			}
 			return inflect.Singularize(word), nil
 		},
+		"i18n": I18nTranslate,
+		"T":    I18nTranslate,
 	}
 }
