@@ -19,17 +19,22 @@ import (
 	"strings"
 
 	"github.com/spf13/hugo/helpers"
+	"github.com/spf13/viper"
 )
 
 // All paths are relative from the source directory base
 type File struct {
 	relpath     string // Original Full Path eg. content/foo.txt
 	logicalName string // foo.txt
+	baseName    string // `post` for `post.md`, also `post.en` for `post.en.md`
 	Contents    io.Reader
 	section     string // The first directory
 	dir         string // The full directory Path (minus file name)
 	ext         string // Just the ext (eg txt)
 	uniqueID    string // MD5 of the filename
+
+	translationBaseName string // `post` for `post.es.md` (if `Multilingual` is enabled.)
+	lang                string // The language code if `Multilingual` is enabled
 }
 
 // UniqueID: MD5 of the filename
@@ -47,7 +52,17 @@ func (f *File) Bytes() []byte {
 
 // BaseFileName Filename without extension
 func (f *File) BaseFileName() string {
-	return helpers.Filename(f.LogicalName())
+	return f.baseName
+}
+
+// Filename with no extension, not even the optional language extension part.
+func (f *File) TranslationBaseName() string {
+	return f.translationBaseName
+}
+
+// Lang for this page, if `Multilingual` is enabled on your site.
+func (f *File) Lang() string {
+	return f.lang
 }
 
 // Section The first directory
@@ -95,6 +110,17 @@ func NewFile(relpath string) *File {
 	f.dir, _ = filepath.Split(f.relpath)
 	_, f.logicalName = filepath.Split(f.relpath)
 	f.ext = strings.TrimPrefix(filepath.Ext(f.LogicalName()), ".")
+	f.baseName = helpers.Filename(f.LogicalName())
+	if viper.GetBool("Multilingual") {
+		f.lang = strings.TrimPrefix(filepath.Ext(f.baseName), ".")
+		if f.lang == "" {
+			f.lang = viper.GetString("DefaultContentLanguage")
+		}
+		f.translationBaseName = helpers.Filename(f.baseName)
+	} else {
+		f.translationBaseName = f.baseName
+	}
+
 	f.section = helpers.GuessSection(f.Dir())
 	f.uniqueID = helpers.Md5String(f.LogicalName())
 

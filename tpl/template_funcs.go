@@ -1575,5 +1575,7 @@ func init() {
 		"upper":        func(a string) string { return strings.ToUpper(a) },
 		"urlize":       helpers.URLize,
 		"where":        where,
+		"i18n":         I18nTranslate,
+		"T":            I18nTranslate,
 	}
 }

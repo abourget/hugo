@@ -56,7 +56,7 @@ Creates a dictionary `(map[string, interface{})`, expects parameters added in va
 Invalid combinations like keys that are not strings or uneven number of parameters, will result in an exception thrown.
 Useful for passing maps to partials when adding to a template.
 
-e.g. Pass into "foo.html" a map with the keys "important, content" 
+e.g. Pass into "foo.html" a map with the keys "important, content"
 
     {{$important := .Site.Params.SomethingImportant }}
     {{range .Site.Params.Bar}}
@@ -67,12 +67,12 @@ e.g. Pass into "foo.html" a map with the keys "important, content"
 
     Important {{.important}}
     {{.content}}
-    
 
-or Create a map on the fly to pass into 
+
+or Create a map on the fly to pass into
 
     {{partial "foo" (dict "important" "Smiles" "content" "You should do more")}}
-    
+
 
 
 ### slice
@@ -381,6 +381,13 @@ e.g.
 
 ## Strings
 
+### printf
+
+Format a string using the standard `fmt.Sprintf` function. See [the go
+doc](https://golang.org/pkg/fmt/) for reference.
+
+e.g., `{{ i18n ( printf "combined_%s" $var ) }}` or `{{ printf "formatted %.2f" 3.1416 }}`
+
 ### chomp
 Removes any trailing newline characters. Useful in a pipeline to remove newlines added by other processing (including `markdownify`).
 
@@ -585,6 +592,23 @@ CJK-like languages.
 {{ "Hello, 世界" | countrunes }}
 <!-- outputs a content length of 8 runes. -->
 ```
+
+## Internationalization
+
+### i18n
+
+This translates a piece of content based on your `i18n/en-US.yaml`
+(and friends) files. You can use the
+[go-i18n](https://github.com/nicksnyder/go-i18n) tools to manage your
+translations.  The translations can exist in both the theme and at the
+root of your repository.
+
+e.g.: `{{ i18n "translation_id" }}`
+
+
+### T
+
+`T` is an alias to `i18n`. E.g. `{{ T "translation_id" }}`.
 
 
 ## URLs
